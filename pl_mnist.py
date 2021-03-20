@@ -1,7 +1,7 @@
 import os
 import torch
 import torch.nn.functional as F
-from torchvision.datasets import MNIST
+from torchvision.datasets import FashionMNIST
 from torchvision import transforms
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     parser.add_argument('--onnx_file', type=str, default=None)
     args = parser.parse_args()
 
-    dataset = MNIST(args.data_dir, download=True, transform=transforms.ToTensor())
+    dataset = FashionMNIST(args.data_dir, download=True, transform=transforms.ToTensor())
     train_loader = DataLoader(dataset, batch_size=args.batch_size)
 
     # init model
