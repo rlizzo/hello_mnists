@@ -50,8 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--max_epochs', type=int, default=10)
     parser.add_argument('--data_dir', type=str, default=os.getcwd())
-    parser.add_argument('--torchscript_file', type=str, default=None)
-    parser.add_argument('--onnx_file', type=str, default=None)
+    parser.add_argument('--output_file', type=str, default=None)
     args = parser.parse_args()
 
     dataset = FashionMNIST(args.data_dir, download=True, transform=transforms.ToTensor())
@@ -61,13 +60,8 @@ if __name__ == '__main__':
     model = LitModel(lr=args.lr)
 
     # most basic trainer, uses good defaults (auto-tensorboard, checkpoints, logs, and more)
-    trainer = pl.Trainer(gpus=args.gpus, max_epochs=args.max_epochs)
+    trainer = pl.Trainer(gpus=args.gpus, max_epochs=args.max_epochs, progress_bar_refresh_rate=100)
     trainer.fit(model, train_loader)
-
-    if args.torchscript_file:
-        scripted_model = model.to_torchscript()
-        torch.jit.save(scripted_model, args.torchscript_file)
-
-    if args.onnx_file:
-        input_sample, _ = dataset[0]
-        model.to_onnx(args.onnx_file, input_sample, export_params=True)
+    
+    if args.output_file:
+        trainer.save_checkpoint(args.output_file)
